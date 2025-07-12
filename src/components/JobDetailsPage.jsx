@@ -1,92 +1,68 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Building2, MapPin, Facebook, Linkedin, Twitter, ArrowLeft } from 'lucide-react';
+import { useJobContext } from '../context/JobContext';
 
 const JobDetailsPage = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [jobData, setJobData] = useState(null);
-  const [otherJobs, setOtherJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { filteredJobs } = useJobContext();
 
-  // API Configuration- - Replace with your actual Jobsoid API details
-  const API_BASE_URL = 'https://api.jobsoid.com/v1';
-  const API_KEY = 'your_api_key_here'; // Replace with your actual API key
+const otherJobs = (filteredJobs || []).filter((job) => job.id !== jobData?.id);
 
-  // Mock data for demonstration - Replace with actual API calls
+
   useEffect(() => {
     const fetchJobData = async () => {
       try {
         setLoading(true);
-        
-        // Simulated API call - Replace with actual Jobsoid API endpoint
-        // const response = await fetch(`${API_BASE_URL}/jobs/{jobId}`, {
-        //   headers: {
-        //     'Authorization': `Bearer ${API_KEY}`,
-        //     'Content-Type': 'application/json'
-        //   }
-        // });
-        // const data = await response.json();
-        
-        // Mock data for demonstration
-        const mockJobData = {
-          id: '1',
-          title: 'React JS - Developer / Sr. Developer',
-          department: 'Development',
-          location: 'Verna, Goa',
-          company: 'Teknorix Systems Goa',
-          employmentType: 'FULL TIME',
-          description: 'Looking for React / Angular Experts.',
-          detailedDescription: 'You must understand the ins and outs of React, with an obsession for code quality. We want someone that is proud and obsessive in delivering quality products. Get-it-done attitude as an independent thinker who enjoys creating solutions in a collaborative environment.',
-          requirements: [
-            '1+ year of React JS Experience',
-            'Understand inheritance in Javascript and object-oriented and functional programming concepts',
-            'Extensive experience with ReactJS',
-            'Expertise with HTML5 and CSS3',
-            'Comfortable translating complex visual designs into clean and modular HTML markup and CSS',
-            'Know how to work with version control systems.',
-            'Bachelors degree in Computer Science or related technical field.'
-          ],
-          bonusPoints: [
-            'You have an advanced degree (e.g. M.Tech) in Computer Science or a related technical field.',
-            'Knowledge of LESS/SASS, Bootstrap, PureCSS',
-            'Understanding of memory management in JavaScript.',
-            'Experience with Webpack, Typescript, ASP.NET, NodeJS'
-          ]
-        };
+        const response = await fetch(`https://demo.jobsoid.com/api/v1/jobs/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
 
-        const mockOtherJobs = [
-          {
-            id: '2',
-            title: 'Quality Assurance Analyst',
-            department: 'Quality Assurance',
-            location: 'Verna, Goa'
-          },
-          {
-            id: '3',
-            title: 'HR Manager',
-            department: 'Human Resources',
-            location: 'Verna, Goa'
-          },
-          {
-            id: '4',
-            title: 'Project Manager',
-            department: 'Project Management',
-            location: 'Verna, Goa'
-          },
-          {
-            id: '5',
-            title: 'Technical Lead - Dot Net / React JS',
-            department: 'Development',
-            location: 'Verna, Goa'
-          }
-        ];
+        // Parse description to extract overview and requirements
+        let parser = new DOMParser();
+        let doc = parser.parseFromString(data.description, 'text/html');
 
-        // Simulate API delay
-        setTimeout(() => {
-          setJobData(mockJobData);
-          setOtherJobs(mockOtherJobs);
-          setLoading(false);
-        }, 1000);
+        // Extract overview text
+        const overviewDiv = doc.querySelector('#job-overview');
+        let overview = overviewDiv ? overviewDiv.innerHTML : '';
 
+        // Extract requirements
+        const requirementsDiv = doc.querySelector('#requirements');
+        let requirementItems = [];
+        if (requirementsDiv) {
+          requirementsDiv.querySelectorAll('li').forEach(li => {
+            requirementItems.push(li.textContent.trim());
+          });
+        }
+
+        // Extract responsibilities (if needed)
+        const responsibilitiesDiv = doc.querySelector('#responsibilities');
+        let responsibilities = [];
+        if (responsibilitiesDiv) {
+          responsibilitiesDiv.querySelectorAll('li').forEach(li => {
+            responsibilities.push(li.textContent.trim());
+          });
+        }
+
+        setJobData({
+          id: data.id,
+          title: data.title,
+          department: data.department ? data.department.title : '',
+          location: data.location ? data.location.title : '',
+          company: data.company,
+          employmentType: data.type,
+          overview: overview,
+          responsibilities: responsibilities,
+          requirements: requirementItems,
+          applyUrl: data.applyUrl,
+        });
+        setLoading(false);
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -94,62 +70,12 @@ const JobDetailsPage = () => {
     };
 
     fetchJobData();
-  }, []);
-
-  // Actual API functions (commented out - uncomment and modify as needed)
-  /*
-  const fetchJobById = async (jobId) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/jobs/${jobId}`, {
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching job:', error);
-      throw error;
-    }
-  };
-
-  const fetchAllJobs = async () => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/jobs`, {
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-      throw error;
-    }
-  };
-  */
+  }, [id]);
 
   const handleApply = () => {
-    // Implement application logic here
-    // You might want to redirect to an application form or open a modal
-    console.log('Apply button clicked');
-  };
-
-  const handleBack = () => {
-    // Implement navigation back to job listings
-    console.log('Back button clicked');
+    if (jobData && jobData.applyUrl) {
+      window.open(jobData.applyUrl, "_blank");
+    }
   };
 
   if (loading) {
@@ -193,7 +119,7 @@ const JobDetailsPage = () => {
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <button 
-            onClick={handleBack}
+            onClick={() => navigate(`/`)}
             className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -227,92 +153,82 @@ const JobDetailsPage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Job Details */}
+          {/* Left column */}
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                {jobData.description}
-              </h2>
-              <p className="text-gray-700 mb-6 leading-relaxed">
-                {jobData.detailedDescription}
-              </p>
+              {/* Overview */}
+              {jobData.overview && (
+                <div
+                  className="text-gray-700 mb-6 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: jobData.overview }}
+                />
+              )}
 
-              <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Requirements:
-                </h3>
-                <ul className="space-y-2">
-                  {jobData.requirements.map((requirement, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="flex-shrink-0 w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3"></span>
-                      <span className="text-gray-700">{requirement}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Responsibilities */}
+              {jobData.responsibilities.length > 0 && (
+                <>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Responsibilities:</h3>
+                  <ul className="list-disc list-inside mb-6">
+                    {jobData.responsibilities.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
 
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Bonus Points if:
-                </h3>
-                <ul className="space-y-2">
-                  {jobData.bonusPoints.map((bonus, index) => (
-                    <li key={index} className="flex items-start">
-                      <span className="flex-shrink-0 w-2 h-2 bg-gray-400 rounded-full mt-2 mr-3"></span>
-                      <span className="text-gray-700">{bonus}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Requirements */}
+              {jobData.requirements.length > 0 && (
+                <>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Requirements:</h3>
+                  <ul className="list-disc list-inside mb-6">
+                    {jobData.requirements.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Right Column - Sidebar */}
+          {/* Right column */}
           <div className="lg:col-span-1">
-            {/* Other Job Openings */}
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                OTHER JOB OPENINGS
-              </h3>
-              <div className="w-12 h-1 bg-blue-500 mb-6"></div>
-              <div className="space-y-4">
-                {otherJobs.map((job) => (
-                  <div key={job.id} className="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                    <h4 className="font-medium text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
-                      {job.title}
-                    </h4>
-                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-                      <div className="flex items-center">
-                        <Building2 className="h-3 w-3 mr-1" />
-                        {job.department}
-                      </div>
-                      <div className="flex items-center">
-                        <MapPin className="h-3 w-3 mr-1" />
-                        {job.location}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+  <h3 className="text-lg font-semibold text-gray-900 mb-4">OTHER JOB OPENINGS</h3>
+  <div className="w-12 h-1 bg-blue-500 mb-6"></div>
+  {otherJobs.length > 0 ? (
+    otherJobs.map(job => (
+      <div
+        key={job.id}
+        onClick={() => navigate(`/jobs/${job.id}`)}
+        className="cursor-pointer mb-4 p-3 rounded hover:bg-gray-50 transition"
+      >
+        <h4 className="text-md font-medium text-gray-900">{job.title}</h4>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+          {job.department && <div className="flex items-center"><Building2 className="h-4 w-4 mr-1" />{job.department.title}</div>}
+          {job.location && <div className="flex items-center"><MapPin className="h-4 w-4 mr-1" />{job.location.title}</div>}
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-500 text-sm">No other jobs available.</p>
+  )}
+</div>
 
-            {/* Share Job Openings */}
+
             <div className="bg-white rounded-lg shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                SHARE JOB OPENINGS
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">SHARE JOB OPENINGS</h3>
               <div className="w-12 h-1 bg-blue-500 mb-6"></div>
               <div className="flex space-x-4">
-                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50">
                   <Facebook className="h-5 w-5" />
                 </button>
-                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50">
                   <Linkedin className="h-5 w-5" />
                 </button>
-                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50">
                   <Twitter className="h-5 w-5" />
                 </button>
               </div>

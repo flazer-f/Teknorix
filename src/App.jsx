@@ -1,13 +1,20 @@
-import { useState } from 'react'
-import JobDetailsPage from './components/JobDetailsPage'
+import React from "react";
+import { HashRouter as Router, Route, Routes } from "react-router-dom";
+import JobSearchPage from "./components/JobSearchPage";
+import JobDetailsPage from "./components/JobDetailsPage";
+import { JobProvider } from './context/JobContext';
 
 function App() {
-
   return (
-    <>
-      <JobDetailsPage/>
-    </>
-  )
+      <JobProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<JobSearchPage />} />
+        <Route path="/jobs/:id" element={<JobDetailsPage />} />
+      </Routes>
+    </Router>
+    </JobProvider>
+  );
 }
 
-export default App
+export default App;
