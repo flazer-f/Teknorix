@@ -1,14 +1,64 @@
-# Teknorix
-test teknorix 
-# React + Vite
+# 🚀 Teknorix Jobs Test Project
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a test project for Teknorix showcasing a job listing and job detail UI.  
+It uses **React.js**, **Vite**, **Tailwind CSS**, and **lucide-react** icons.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 💡 Tech Stack
 
-## Expanding the ESLint configuration
+- ⚛️ **React.js** — modern frontend framework
+- ⚡ **Vite** — lightning-fast dev environment and bundler
+- 💨 **Tailwind CSS** — utility-first CSS framework
+- 🗺️ **lucide-react** — icon library
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🌟 Features
+
+- Search for jobs with live filtering
+- Filter jobs by department, location, and function
+- View detailed job information
+- Apply and share job openings
+- Responsive and modern UI
+
+---
+
+## 🔗 API Reference
+
+This project fetches data from the [Jobsoid public demo API](https://demo.jobsoid.com/api).
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/your-username/teknorix.git
+cd teknorix
+
+npm install
+
+npm run dev
+
+
+
+src/
+  ├─ components/
+  │    ├─ JobSearchPage.jsx
+  │    └─ JobDetailsPage.jsx
+  ├─ context/
+  │    └─ JobContext.js
+  ├─ App.jsx
+  ├─ main.jsx
+  └─ index.css
+
+
+npm run dev — start local development server
+
+npm run build — build for production
+
+npm run preview — preview production build locally
+
+
