@@ -6,13 +6,13 @@ import { JobProvider } from './context/JobContext';
 
 function App() {
   return (
-      <JobProvider>
-    <Router>
-      <Routes>
-        <Route path="/" element={<JobSearchPage />} />
-        <Route path="/jobs/:id" element={<JobDetailsPage />} />
-      </Routes>
-    </Router>
+    <JobProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<JobSearchPage />} />
+          <Route path="/jobs/:id" element={<JobDetailsPage />} />
+        </Routes>
+      </Router>
     </JobProvider>
   );
 }

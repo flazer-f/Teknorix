@@ -11,7 +11,7 @@ const JobDetailsPage = () => {
   const [error, setError] = useState(null);
   const { filteredJobs } = useJobContext();
 
-const otherJobs = (filteredJobs || []).filter((job) => job.id !== jobData?.id);
+  const otherJobs = (filteredJobs || []).filter((job) => job.id !== jobData?.id);
 
 
   useEffect(() => {
@@ -94,8 +94,8 @@ const otherJobs = (filteredJobs || []).filter((job) => job.id !== jobData?.id);
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">Error loading job details: {error}</p>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
           >
             Try Again
@@ -118,7 +118,7 @@ const otherJobs = (filteredJobs || []).filter((job) => job.id !== jobData?.id);
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <button 
+          <button
             onClick={() => navigate(`/`)}
             className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
           >
@@ -196,26 +196,26 @@ const otherJobs = (filteredJobs || []).filter((job) => job.id !== jobData?.id);
           {/* Right column */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-  <h3 className="text-lg font-semibold text-gray-900 mb-4">OTHER JOB OPENINGS</h3>
-  <div className="w-12 h-1 bg-blue-500 mb-6"></div>
-  {otherJobs.length > 0 ? (
-    otherJobs.map(job => (
-      <div
-        key={job.id}
-        onClick={() => navigate(`/jobs/${job.id}`)}
-        className="cursor-pointer mb-4 p-3 rounded hover:bg-gray-50 transition"
-      >
-        <h4 className="text-md font-medium text-gray-900">{job.title}</h4>
-        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-          {job.department && <div className="flex items-center"><Building2 className="h-4 w-4 mr-1" />{job.department.title}</div>}
-          {job.location && <div className="flex items-center"><MapPin className="h-4 w-4 mr-1" />{job.location.title}</div>}
-        </div>
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-500 text-sm">No other jobs available.</p>
-  )}
-</div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">OTHER JOB OPENINGS</h3>
+              <div className="w-12 h-1 bg-blue-500 mb-6"></div>
+              {otherJobs.length > 0 ? (
+                otherJobs.map(job => (
+                  <div
+                    key={job.id}
+                    onClick={() => navigate(`/jobs/${job.id}`)}
+                    className="cursor-pointer mb-4 p-3 rounded hover:bg-gray-50 transition"
+                  >
+                    <h4 className="text-md font-medium text-gray-900">{job.title}</h4>
+                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                      {job.department && <div className="flex items-center"><Building2 className="h-4 w-4 mr-1" />{job.department.title}</div>}
+                      {job.location && <div className="flex items-center"><MapPin className="h-4 w-4 mr-1" />{job.location.title}</div>}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500 text-sm">No other jobs available.</p>
+              )}
+            </div>
 
 
             <div className="bg-white rounded-lg shadow-sm p-6">
